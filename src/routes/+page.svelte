@@ -16,12 +16,17 @@
 		action: T;
 		context: K;
 	};
-	export type EditOptions =
+	export type EditTaskOptions =
 		| GenericEditOptions<'toggle_completed', { card_id: string; task_id: string }>
 		| GenericEditOptions<
 				'edit_title',
 				{ card_id: string; task_id: string; new_task_title: string }
 		  >;
+
+	export type EditCardOptions = GenericEditOptions<
+		'edit_title',
+		{ card_id: string; new_card_title: string }
+	>;
 
 	type GenericReducerAction<T, K> = {
 		type: T;
@@ -37,11 +42,12 @@
 	export type CardCrud = {
 		create: (title?: string) => Promise<void>;
 		read: () => Promise<void>;
+		edit: (options: EditCardOptions) => Promise<void>;
 		delete: (card_id: string) => Promise<void>;
 	};
 	export type TaskCrud = {
 		create: (card_id: string, title: string) => Promise<void>;
-		edit: (options: EditOptions) => Promise<void>;
+		edit: (options: EditTaskOptions) => Promise<void>;
 		delete: (card_id: string, task_id: string) => Promise<void>;
 	};
 </script>
@@ -102,6 +108,19 @@
 			});
 			creatingCard = false;
 		},
+		edit: async (options: EditCardOptions) => {
+			let res: Card | undefined;
+			if (options.action === 'edit_title') {
+				res = await trpc($page).editCardTitle.mutate(options.context);
+			}
+
+			if (!res) return;
+
+			cards = cards_reducer(cards, {
+				type: 'replace',
+				payload: { new_card: res }
+			});
+		},
 		delete: async (card_id: string) => {
 			const res = await trpc($page).deleteCard.mutate({ card_id });
 
@@ -125,7 +144,7 @@
 				payload: { new_card: res }
 			});
 		},
-		edit: async (options: EditOptions) => {
+		edit: async (options: EditTaskOptions) => {
 			let res: Card | undefined;
 			if (options.action === 'toggle_completed') {
 				res = await trpc($page).editTaskCompleted.mutate(options.context);

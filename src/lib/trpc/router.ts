@@ -122,6 +122,23 @@ export const router = t.router({
 
 		return newCard;
 	}),
+	editCardTitle: t.procedure
+		.input(z.object({ card_id: z.string(), new_card_title: z.string() }))
+		.mutation(async ({ input }) => {
+			let newCard;
+			cards = cards.map((card) => {
+				if (card.id !== input.card_id) return card;
+
+				newCard = {
+					...card,
+					title: input.new_card_title
+				};
+
+				return newCard;
+			});
+
+			return newCard;
+		}),
 	deleteCard: t.procedure.input(z.object({ card_id: z.string() })).mutation(async ({ input }) => {
 		const oldCardsLength = cards.length;
 		cards = cards.filter((card) => card.id !== input.card_id);
