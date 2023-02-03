@@ -2,6 +2,10 @@
 	import { signIn } from '@auth/sveltekit/client';
 </script>
 
+<svelte:head>
+	<title>Sign In | Trello Clone</title>
+	<meta name="description" content="Sign In to get started with Trello Clone today!" />
+</svelte:head>
 <main class="flex-col w-full h-full flex gap-8 flex-wrap justify-center items-center">
 	<div class="flex flex-col items-center gap-2">
 		<h1 class="text-5xl font-bold text-neutral-50">
