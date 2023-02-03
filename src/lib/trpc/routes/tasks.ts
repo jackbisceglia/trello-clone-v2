@@ -40,7 +40,11 @@ export const taskRouter = router({
 					}
 				},
 				include: {
-					tasks: true
+					tasks: {
+						orderBy: {
+							createdAt: 'asc'
+						}
+					}
 				}
 			});
 
@@ -62,7 +66,11 @@ export const taskRouter = router({
 					}
 				},
 				include: {
-					tasks: true
+					tasks: {
+						orderBy: {
+							createdAt: 'asc'
+						}
+					}
 				}
 			});
 
@@ -79,7 +87,11 @@ export const taskRouter = router({
 					}
 				},
 				include: {
-					tasks: true
+					tasks: {
+						orderBy: {
+							createdAt: 'asc'
+						}
+					}
 				}
 			});
 

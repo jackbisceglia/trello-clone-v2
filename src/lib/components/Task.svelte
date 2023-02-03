@@ -60,7 +60,7 @@
 		</form>
 	{:else}
 		<p
-			class={`text-neutral-800 select-none cursor-pointer decoration-bleu-bg py-2 w-max pr-2 decoration-2 text-left break-all text-base  ${
+			class={`text-neutral-800 select-none cursor-pointer decoration-bleu-bg py-2 w-max pr-2 decoration-2 text-left break-words text-base  ${
 				task.completed && 'line-through'
 			}`}
 			on:click={() => toggleCompleted(card_id, task.id, task.completed)}

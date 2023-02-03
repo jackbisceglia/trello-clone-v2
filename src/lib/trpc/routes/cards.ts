@@ -34,7 +34,11 @@ export const cardRouter = router({
 					}
 				},
 				include: {
-					tasks: true
+					tasks: {
+						orderBy: {
+							createdAt: 'asc'
+						}
+					}
 				}
 			});
 
@@ -49,7 +53,11 @@ export const cardRouter = router({
 				},
 				data: { title: input.new_card_title },
 				include: {
-					tasks: true
+					tasks: {
+						orderBy: {
+							createdAt: 'asc'
+						}
+					}
 				}
 			});
 

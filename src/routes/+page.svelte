@@ -185,9 +185,7 @@
 		{/if}
 		{#if cards.length > 0}
 			{#each cards as card (card.id)}
-				<div>
-					<CardComponent {...{ ...card, taskCrud, cardCrud }} />
-				</div>
+				<CardComponent {...{ ...card, taskCrud, cardCrud }} />
 			{/each}
 		{:else}
 			<div class="flex flex-col items-center justify-center w-full h-full">
