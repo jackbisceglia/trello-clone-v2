@@ -1,14 +1,5 @@
 <script context="module" lang="ts">
-	export type Task = {
-		id: string;
-		title: string;
-		cardId: string;
-		completed: boolean;
-	};
-
-	export type Card = {
-		id: string;
-		title: string;
+	export type CardWithTasks = Card & {
 		tasks: Task[];
 	};
 
@@ -17,7 +8,10 @@
 		context: K;
 	};
 	export type EditTaskOptions =
-		| GenericEditOptions<'toggle_completed', { card_id: string; task_id: string }>
+		| GenericEditOptions<
+				'toggle_completed',
+				{ card_id: string; task_id: string; completed: boolean }
+		  >
 		| GenericEditOptions<
 				'edit_title',
 				{ card_id: string; task_id: string; new_task_title: string }
@@ -34,9 +28,9 @@
 	};
 
 	type CardActions =
-		| GenericReducerAction<'prepend', { new_card: Card }>
-		| GenericReducerAction<'replace', { new_card: Card }>
-		| GenericReducerAction<'reload', { cards: Card[] }>
+		| GenericReducerAction<'prepend', { new_card: CardWithTasks }>
+		| GenericReducerAction<'replace', { new_card: CardWithTasks }>
+		| GenericReducerAction<'reload', { cards: CardWithTasks[] }>
 		| GenericReducerAction<'delete', { card_id: string }>;
 
 	export type CardCrud = {
@@ -44,6 +38,7 @@
 		read: () => Promise<void>;
 		edit: (options: EditCardOptions) => Promise<void>;
 		delete: (card_id: string) => Promise<void>;
+		fetching: boolean;
 	};
 	export type TaskCrud = {
 		create: (card_id: string, title: string) => Promise<void>;
@@ -58,9 +53,10 @@
 	import { trpc } from '$lib/trpc/client';
 	import { Plus } from 'radix-icons-svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-
+	import type { Card, Task } from '@prisma/client';
 	// helpers
-	const cards_reducer = (state: Card[], action: CardActions) => {
+	const cards_reducer = (state: CardWithTasks[], action: CardActions) => {
+		console.log('entering reducer');
 		switch (action.type) {
 			case 'reload':
 				return action.payload.cards;
@@ -79,14 +75,19 @@
 				return state;
 		}
 	};
+
 	// Page State
-	let cards: Card[] = [];
+	let cards: CardWithTasks[] = [];
 	let creatingCard = false;
 
 	// CRUD
 	const cardCrud: CardCrud = {
-		read: async () => {
-			const res = await trpc($page).getCards.query();
+		fetching: false,
+		read: async function () {
+			this.fetching = true;
+			const res = await trpc($page).cards.getCardsById.query();
+
+			console.log('res: ', res);
 
 			if (!res) return;
 
@@ -94,11 +95,15 @@
 				type: 'reload',
 				payload: { cards: res }
 			});
+			this.fetching = false;
 		},
-		create: async (title = 'Untitled') => {
+		create: async function (title = 'Untitled') {
 			creatingCard = true;
 
-			const res = await trpc($page).createCard.mutate({ title });
+			const res = await trpc($page).cards.createCard.mutate({
+				title,
+				order: Math.max(...cards.map((c) => c.order), -1) + 1
+			});
 
 			if (!res) return;
 
@@ -108,10 +113,10 @@
 			});
 			creatingCard = false;
 		},
-		edit: async (options: EditCardOptions) => {
-			let res: Card | undefined;
+		edit: async function (options: EditCardOptions) {
+			let res;
 			if (options.action === 'edit_title') {
-				res = await trpc($page).editCardTitle.mutate(options.context);
+				res = await trpc($page).cards.editCardTitle.mutate(options.context);
 			}
 
 			if (!res) return;
@@ -121,21 +126,21 @@
 				payload: { new_card: res }
 			});
 		},
-		delete: async (card_id: string) => {
-			const res = await trpc($page).deleteCard.mutate({ card_id });
+		delete: async function (card_id: string) {
+			const res = await trpc($page).cards.deleteCard.mutate({ card_id });
 
 			if (!res) return;
 
 			cards = cards_reducer(cards, {
 				type: 'delete',
-				payload: { card_id: res }
+				payload: { card_id: res.id }
 			});
 		}
 	};
 
 	const taskCrud: TaskCrud = {
 		create: async (card_id: string, title: string) => {
-			const res = await trpc($page).createTask.mutate({ card_id, title });
+			const res = await trpc($page).tasks.createTask.mutate({ card_id, title });
 
 			if (!res) return;
 
@@ -145,11 +150,11 @@
 			});
 		},
 		edit: async (options: EditTaskOptions) => {
-			let res: Card | undefined;
+			let res = undefined;
 			if (options.action === 'toggle_completed') {
-				res = await trpc($page).editTaskCompleted.mutate(options.context);
+				res = await trpc($page).tasks.editTaskCompleted.mutate(options.context);
 			} else if (options.action === 'edit_title') {
-				res = await trpc($page).editTaskTitle.mutate(options.context);
+				res = await trpc($page).tasks.editTaskTitle.mutate(options.context);
 			}
 
 			if (!res) return;
@@ -160,7 +165,7 @@
 			});
 		},
 		delete: async (card_id: string, task_id: string) => {
-			const res = await trpc($page).deleteTask.mutate({ card_id, task_id });
+			const res = await trpc($page).tasks.deleteTask.mutate({ card_id, task_id });
 
 			if (!res) return;
 
@@ -178,14 +183,28 @@
 	{#await cardCrud.read()}
 		<Spinner />
 	{:then}
-		{#each cards as card (card.id)}
-			<CardComponent {...{ ...card, taskCrud, cardCrud }} />
-		{/each}
+		{#if creatingCard}
+			<div class="w-[15rem] ">
+				<Spinner />
+			</div>
+		{/if}
+		{#if cards.length > 0}
+			{#each cards as card (card.id)}
+				<div>
+					<CardComponent {...{ ...card, taskCrud, cardCrud }} />
+				</div>
+			{/each}
+		{:else}
+			<div class="flex flex-col items-center justify-center w-full h-full">
+				<h1 class="text-5xl font-semibold text-neutral-200 text-center py-2">No cards yet</h1>
+				<p class="text-center text-bleu-primary text-lg">Click the button below to create a card</p>
+			</div>
+		{/if}
 	{/await}
 	<button
 		on:click={() => cardCrud.create()}
 		disabled={creatingCard}
-		class="disabled:bg-neutral-500 text-4xl bg-bleu-primary h-min p-4 rounded-full my-4 hover:bg-[#3ecfff] transition-all duration-100 ease-in-out"
+		class="absolute bottom-20 left-20 disabled:bg-neutral-500 text-4xl bg-bleu-primary h-min p-4 rounded-full my-4 hover:bg-[#3ecfff] transition-all duration-100 ease-in-out"
 		><Plus class="h-5 w-5" /></button
 	>
 </main>

@@ -1,11 +1,11 @@
-@import url('https://api.fontshare.com/v2/css?f[]=clash-grotesk@200,700,400,600,300,500&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,500,300,600,400,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-	font-family: 'Clash Grotesk', sans-serif;
+	font-family: 'General Sans', sans-serif;
 	height: 100vh;
 	@apply bg-bleu-bg;
 }
