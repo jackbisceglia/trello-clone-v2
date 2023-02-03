@@ -1,12 +1,10 @@
-<script>
+<script lang="ts">
 	import { signIn } from '@auth/sveltekit/client';
-	import landing_page from '$lib/assets/landing_page.png';
 </script>
 
 <svelte:head>
 	<title>Sign In | Trello Clone</title>
 	<meta name="description" content="Sign In to get started with Trello Clone today! ✏️" />
-	<meta property="og:image" content={landing_page} />'
 </svelte:head>
 <main class="flex-col w-full h-full flex gap-8 flex-wrap justify-center items-center">
 	<div class="flex flex-col items-center gap-2">
