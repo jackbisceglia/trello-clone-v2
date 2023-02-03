@@ -174,7 +174,7 @@
 	};
 </script>
 
-<main class="w-full flex gap-8 flex-wrap">
+<main class="w-full flex gap-8 flex-wrap justify-center sm:justify-start">
 	{#await cardCrud.read()}
 		<Spinner />
 	{:then}
@@ -188,7 +188,7 @@
 				<CardComponent {...{ ...card, taskCrud, cardCrud }} />
 			{/each}
 		{:else}
-			<div class="flex flex-col items-center justify-center w-full h-full">
+			<div class="flex flex-col items-center sm:items-start w-full h-full">
 				<h1 class="text-5xl font-semibold text-neutral-200 text-center py-2">No cards yet</h1>
 				<p class="text-center text-bleu-primary text-lg">Click the button below to create a card</p>
 			</div>

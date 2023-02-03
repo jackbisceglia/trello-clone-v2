@@ -75,7 +75,7 @@
 
 <div
 	transition:fade={{ delay: 0, duration: 100 }}
-	class={`flex h-min flex-col gap-4 bg-bleu-gray px-3 pt-2 pb-4 rounded-md max-w-[15rem] min-w-[12.5rem] justify-start text-center drop-shadow-md ${
+	class={`flex h-min flex-col gap-4 bg-bleu-gray px-3 pt-2 pb-4 rounded-md w-1/5 min-w-[16rem] justify-start text-center drop-shadow-md ${
 		cardIsMounting ? 'opacity-100' : 'opacity-100'
 	} transition-all ease-in-out duration-100`}
 >
