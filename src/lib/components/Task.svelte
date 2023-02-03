@@ -35,7 +35,7 @@
 </script>
 
 <div
-	class="flex justify-between w-full bg-neutral-50 px-4 text-lg gap-12 rounded-md drop-shadow-sm font-medium"
+	class="flex justify-between w-full bg-neutral-50 px-4 text-lg rounded-md drop-shadow-sm font-medium"
 >
 	{#if isEditingTaskTitle}
 		<form class="flex mt-auto w-full justify-end items-between gap-1 py-2" on:submit={renameTask}>
@@ -60,7 +60,7 @@
 		</form>
 	{:else}
 		<p
-			class={`text-neutral-800 select-none cursor-pointer decoration-bleu-bg py-2 w-max pr-2 decoration-2 text-left break-words text-base  ${
+			class={`text-neutral-800 select-none cursor-pointer decoration-bleu-bg py-2  pr-2 decoration-2 text-left break-words max-w-[75%] text-base  ${
 				task.completed && 'line-through'
 			}`}
 			on:click={() => toggleCompleted(card_id, task.id, task.completed)}
