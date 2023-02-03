@@ -1,11 +1,8 @@
 import { router, publicProcedure, protectedProcedure } from '../router';
 import { z } from 'zod';
 
-console.log('procedure', publicProcedure);
-
 export const cardRouter = router({
 	getCardsById: protectedProcedure.query(async ({ ctx }) => {
-		console.log(ctx.session.user.id);
 		const cards = await ctx.p.card.findMany({
 			where: {
 				userId: ctx.session.user.id

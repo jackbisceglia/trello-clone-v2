@@ -18,11 +18,11 @@
 				class="border-bleu-dark border-2 px-4 rounded-md text-lg self-stretch hover:bg-bleu-dark hover:text-bleu-primary transition-all ease-in-out duration-150"
 				>Sign Out</button
 			>
-			<a
+			<!-- <a
 				href="/me"
 				class="border-bleu-dark border-2 px-4 rounded-md text-lg self-stretch hover:bg-bleu-dark hover:text-bleu-primary transition-all ease-in-out duration-150"
 				>My Account</a
-			>
+			> -->
 		</div>
 	</nav>
 {/if}

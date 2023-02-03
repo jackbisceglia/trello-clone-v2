@@ -56,7 +56,6 @@
 	import type { Card, Task } from '@prisma/client';
 	// helpers
 	const cards_reducer = (state: CardWithTasks[], action: CardActions) => {
-		console.log('entering reducer');
 		switch (action.type) {
 			case 'reload':
 				return action.payload.cards;
@@ -86,8 +85,6 @@
 		read: async function () {
 			this.fetching = true;
 			const res = await trpc($page).cards.getCardsById.query();
-
-			console.log('res: ', res);
 
 			if (!res) return;
 
@@ -175,8 +172,6 @@
 			});
 		}
 	};
-	// Lifecycle
-	$: console.log(cards);
 </script>
 
 <main class="w-full flex gap-8 flex-wrap">
