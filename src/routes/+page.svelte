@@ -175,7 +175,7 @@
 </script>
 
 <svelte:head>
-	<title>Home | Trello Clone</title>
+	<title>Home | Trello Clone ✏️</title>
 	<meta name="description" content="Your home for Trello Clone" />
 </svelte:head>
 <main class="w-full flex gap-8 flex-wrap justify-center sm:justify-start">
